@@ -1,1 +1,1 @@
-# COVID-19-AUSTRALIA
+# COVID-19-Australia
