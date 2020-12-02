@@ -4,8 +4,6 @@
 
 </div>
 
-author Justin
-
 # Executive Summary
 
 This report brings together data of worldwide COVID-19 cases and
@@ -75,7 +73,7 @@ and states. The data set is extracted from the below link by
 right-clicking the ‘Raw’ icon and clicking ‘Save link as…’, this allows
 the data set to be saved into CSV format on a local drive.
 
-<https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv>
+[John Hopkins COVID-19 Cases Data](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv)
 
 | Variable | Name               | Description                                                                                                                                   |
 |----------|--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
@@ -128,7 +126,7 @@ www.covid19data.com.au. The data set gives the daily cumulative counts
 of COVID-19 tests in Australian provinces and states. The CSV data set
 was extracted from the below link by clicking the ‘download data’ icon.
 
-<https://e.infogram.com/_/3osqzRmYBiJsJafg79YC?parent_url=https%3A%2F%2Fwww-covid19data-com-au.filesusr.com%2Fhtml%2F2aed08_944ecbfd558f24812177bca5a8a74000.html&src=embed#>
+[Infogram COVID-19 Tests Data](https://e.infogram.com/_/3osqzRmYBiJsJafg79YC?parent_url=https%3A%2F%2Fwww-covid19data-com-au.filesusr.com%2Fhtml%2F2aed08_944ecbfd558f24812177bca5a8a74000.html&src=embed#)
 
 | Variable | Name                                | Description                                                                                                   |
 |----------|-------------------------------------|---------------------------------------------------------------------------------------------------------------|
