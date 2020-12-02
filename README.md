@@ -4,14 +4,9 @@
 
 </div>
 
-<h1 style="font-size: 60px;
-           text-align:center; 
-           font-weight: 900;
-           text-shadow: 0px 1px, 1px 0px, 1px 1px;
-           margin-top: 45px;
-           margin-bottom: 40px;
-           padding-bottom: 0px;
-           padding-top: 0px;"> Executive Summary </h1>
+author Justin
+
+# Executive Summary
 
 This report brings together data of worldwide COVID-19 cases and
 Australian COVID-19 testing. Through a series of pre-processing steps,
