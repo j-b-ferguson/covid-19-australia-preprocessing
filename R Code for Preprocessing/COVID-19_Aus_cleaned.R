@@ -19,10 +19,10 @@ library(svglite) # Export plots into SVG format
 # SECTION 2: Data --------------------------------------------------------------------
 ######################################################################################
 
-cases <- read_csv('time_series_covid19_confirmed_global.csv')
+cases <- read_csv('~/COVID-19-AUSTRALIA/Original Untidy Data Sets/time_series_covid19_confirmed_global.csv')
 head(cases, 3) # Show first 3 observations of cases data frame
 
-tests <- read_csv('Total tests.csv')
+tests <- read_csv('~/COVID-19-AUSTRALIA/Original Untidy Data Sets/Total tests.csv')
 head(tests, 3) # Show first 3 observations of tests data frame
 
 ######################################################################################
