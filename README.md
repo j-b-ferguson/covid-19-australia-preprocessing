@@ -7,7 +7,7 @@
 <iframe> test </iframe>
 
 
-# Executive Summary
+# **Executive Summary**
 
 This report brings together data of worldwide COVID-19 cases and
 Australian COVID-19 testing. Through a series of pre-processing steps,
