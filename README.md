@@ -1,3 +1,8 @@
+---
+title: General Stuff
+author: Me
+---
+
 <div class="container-fluid main-container">
 
 <div id="header" class="fluid-row">
@@ -157,7 +162,7 @@ by the `Date` and `Province/State` variables.
 
 <div id="understand" class="section level4">
 
-#### Understand
+# Understand
 
 Before both data sets can be changed to tidy format and reshaped, the
 data structure must be understood, beginning with the object classes.
@@ -243,7 +248,7 @@ into long format first.
 
 <div id="reshape" class="section level5">
 
-##### Reshape
+# Reshape
 
 In this section, the tidy data principles are applied to both data
 frames to enable further pre-processing. For refererence, the tidy data
@@ -312,7 +317,7 @@ head(tests_gathered, 3)
 
 <div id="convert" class="section level6">
 
-### Convert
+# Convert
 
 Now that both data frames are in a tidy format, proper data type
 conversions must be performed. Beginning wtih `tests_gathered`, the
@@ -411,7 +416,7 @@ str(cases_gathered)
 
 <div id="join" class="section level7">
 
-### Join
+# Join
 
 A join is now carried out to merge the data frames by the common
 variables `Date` and `Province/State`. To decide join type, observe the
@@ -490,7 +495,7 @@ head(covidAU_joined, 3)
 
 <div id="mutate" class="section level3">
 
-### Mutate
+# Mutate
 
 In this section, a new variable is mutated by considering `Daily Cases`
 and `Daily Tests`. To begin, these two variables are created and filled
@@ -543,7 +548,7 @@ covidAU_joined %>% select(`Province/State`, Date, `Case to Test Ratio per Millio
 
 <div id="scan-i" class="section level9">
 
-### Scan I
+# Scan I
 
 In this section, the data frame is checked for errors and
 inconsistencies. Firstly, consider the logic behind the creation of
@@ -806,7 +811,7 @@ is.nan(covidAU_joined$`Case to Test Ratio per Million`) %>% sum()
 
 </div>
 
-### Scan II
+# Scan II
 
 In this section, missing values are identified and imputed. The data
 frame contains the following missing values for each given variable.
