@@ -4,34 +4,20 @@
 
 </div>
 
-<style type="text/css">
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap');
-h1 {
-  font-size: 32px;
-  text-align:center; 
-  font-family: 'Lato', sans-serif;
-  font-weight: 900;
-  text-shadow: 0px 1px, 1px 0px, 1px 1px;
-  margin-top: 45px;
-  margin-bottom: 40px;
-  padding-bottom: 0px;
-  padding-top: 0px;
-}
+<h1 style="font-size: 32px;
+           text-align:center; 
+           font-family: 'Lato', sans-serif;
+           font-weight: 900;
+           text-shadow: 0px 1px, 1px 0px, 1px 1px;
+           margin-top: 45px;
+           margin-bottom: 40px;
+           padding-bottom: 0px;
+           padding-top: 0px;"> Executive Summary </h1>
 
-p {  
-	text-align:justify; 
-	font-family: 'Lato', sans-serif;
-	font-size:16px;
-	margin-top: 0px;
-	margin-bottom: 15px;
-	padding-bottom: 0px;
-	padding-top: 0px;
-} 
-</style>
-
-<h1> Executive Summary </h1>
-
-<p1> 
+<p1 style="font-size: 16px;
+           text-align: justify;
+           font-family: 'Lato', sans-serif;
+           @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap');"> 
 This report brings together data of worldwide COVID-19 cases and
 Australian COVID-19 testing. Through a series of pre-processing steps,
 the data is filtered for cases and tests relevant to Australian states.
