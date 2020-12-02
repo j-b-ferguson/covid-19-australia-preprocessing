@@ -6,7 +6,6 @@
 
 <h1 style="font-size: 32px;
            text-align:center; 
-           font-family: 'Lato', sans-serif;
            font-weight: 900;
            text-shadow: 0px 1px, 1px 0px, 1px 1px;
            margin-top: 45px;
@@ -14,10 +13,6 @@
            padding-bottom: 0px;
            padding-top: 0px;"> Executive Summary </h1>
 
-<p1 style="font-size: 16px;
-           text-align: justify;
-           font-family: 'Lato', sans-serif;
-           @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap');"> 
 This report brings together data of worldwide COVID-19 cases and
 Australian COVID-19 testing. Through a series of pre-processing steps,
 the data is filtered for cases and tests relevant to Australian states.
@@ -47,7 +42,7 @@ and tidy data frame. Using a multivariate outlier technique, outliers
 associated with numeric variables are identified and removed. Then
 selecting the variables of interest concerning daily tests and cases, a
 Boxcox transformation is performed. A linear model is then created from
-the transformed data, and plots with simple linear regression displayed.</p1>
+the transformed data, and plots with simple linear regression displayed.
 
 </div>
 
