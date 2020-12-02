@@ -4,6 +4,10 @@
 
 </div>
 
+% title
+% author(s) (separated by semicolons)
+% date
+
 # **Executive Summary**
 
 This **report** brings together data of worldwide COVID-19 cases and
