@@ -4,24 +4,7 @@
 
 </div>
 
-<div id="executive-summary" class="section level1">
-<style type="text/css">
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap');
-
-h1 {
-  font-size: 32px;
-  text-align:center; 
-  font-family: 'Lato', sans-serif;
-  font-weight: 900;
-  text-shadow: 0px 1px, 1px 0px, 1px 1px;
-  margin-top: 45px;
-  margin-bottom: 40px;
-  padding-bottom: 0px;
-  padding-top: 0px;
-}
-</style>
-
-# Executive Summary
+<h1> Executive Summary </h1>
 
 This report brings together data of worldwide COVID-19 cases and
 Australian COVID-19 testing. Through a series of pre-processing steps,
