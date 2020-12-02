@@ -4,7 +4,7 @@
 
 </div>
 
-<h1 style="font-size: 32px;
+<h1 style="font-size: 60px;
            text-align:center; 
            font-weight: 900;
            text-shadow: 0px 1px, 1px 0px, 1px 1px;
