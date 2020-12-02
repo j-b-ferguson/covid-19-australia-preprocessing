@@ -1,12 +1,14 @@
+---
+title: my title
+author: my name
+date: today
+...
+
 <div class="container-fluid main-container">
 
 <div id="header" class="fluid-row">
 
 </div>
-
-% title
-% author(s) (separated by semicolons)
-% date
 
 # **Executive Summary**
 
