@@ -4,12 +4,9 @@
 
 </div>
 
-<iframe> test </iframe>
-
-
 # **Executive Summary**
 
-This report brings together data of worldwide COVID-19 cases and
+This **report** brings together data of worldwide COVID-19 cases and
 Australian COVID-19 testing. Through a series of pre-processing steps,
 the data is filtered for cases and tests relevant to Australian states.
 It is then tidied, scanned, transformed, and analysed, as required.
