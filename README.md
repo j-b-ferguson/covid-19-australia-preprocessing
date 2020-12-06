@@ -6,9 +6,10 @@
 
 # COVID-19 Australian Data Pre-processing
 
-## Author
+**Author**
 
 [Justin Ferguson GitHub](https://github.com/j-b-ferguson)
+
 [Justin Ferguson LinkedIn](https://www.linkedin.com/in/jf2749/)
 
 ## Executive Summary
