@@ -19,10 +19,10 @@ library(svglite) # Export plots into SVG format
 # SECTION 2: Data --------------------------------------------------------------------
 ######################################################################################
 
-cases <- read_csv('~/COVID-19-AUSTRALIA/Original Untidy Data Sets/time_series_covid19_confirmed_global.csv')
+cases <- read_csv('~/COVID-19-AUSTRALIA-PREPROCESSING/Original Untidy Data Sets/time_series_covid19_confirmed_global.csv')
 head(cases, 3) # Show first 3 observations of cases data frame
 
-tests <- read_csv('~/COVID-19-AUSTRALIA/Original Untidy Data Sets/Total tests.csv')
+tests <- read_csv('~/COVID-19-AUSTRALIA-PREPROCESSING/Original Untidy Data Sets/Total tests.csv')
 head(tests, 3) # Show first 3 observations of tests data frame
 
 ######################################################################################
@@ -34,10 +34,7 @@ list(dim(cases), dim(tests)) # Show data frame dimensions
 
 # Show data types in cases data frame
 list(sapply(cases[,1:4], class),
-     sapply(cases[,5:273], class) %>% 
-      unique() %>%
-        paste('Variables 1/22/20 ... 10/16/20 are all', .))
-
+     sapply(cases[,5:273], class) %>% unique() %>% paste('Variables 1/22/20 ... 10/16/20 are all', .))
 
 # Show data types in tests data frame
 str(tests, give.attr = FALSE)
@@ -240,7 +237,7 @@ for (i in states) {
 }
 
 # Plot matrix of missing values
-svglite('missingvaluematrix.svg')
+svglite('~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/missingvaluematrix.svg')
 par(mar = c(0,0,0,0))
 layout.matrix <- matrix(c(1, 2, 3, 4, 5, 6, 7, 8, 9), nrow = 3, ncol =3)
 layout(mat = layout.matrix)
@@ -269,7 +266,7 @@ distsvg <- ggplot(covidAU_joined, aes(`Daily Tests`)) +
               strip.background = element_blank(),
               axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
               axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
-ggsave(file="dailytestdistributions.svg", plot=distsvg, width=10, height=8, dpi = 300)
+ggsave(file="~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/dailytestdistributions.svg", plot=distsvg, width=10, height=8, dpi = 300)
 
 #######################################################################################
 # SECTION 12: Decide the best regression statistic for imputation of missing values 
@@ -370,12 +367,14 @@ for (i in states) {
 lossmatrix <- bind_cols(lossACT, lossNT, lossQLD, lossSA, lossTAS, lossVIC, lossWA) %>% as.matrix()
 
 # Plot loss matrix
+svglite('~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/lossmatrix.svg')
 par(mfrow = c(1,1), mai = c(1,1.3,1,1.3))
 plot(lossmatrix, 
      col = c(rev(brewer.pal(4, 'Blues'))), 
      xlab = 'State', 
      ylab = 'Loss Functions',
      main = 'Preferred Regression Statistic for Imputing Missing \nValues given Loss Function')
+dev.off()
 
 #######################################################################################
 # SECTION 13: Impute missing values of daily tests given preferred regression statistic
@@ -442,7 +441,7 @@ covidAU_wide <- covidAU_joined %>% gather(`Cumulative Metric`, `Cumulative Value
 covidAU_wide <- covidAU_wide %>% gather(`Daily Metric`, `Daily Value`, 3:4)
 
 # Create time series area plot overlaying daily cases and daily tests
-dailycasestests <- ggplot(covidAU_gathered, aes(Date, `Daily Value`)) +
+dailycasestests <- ggplot(covidAU_wide, aes(Date, `Daily Value`)) +
   geom_area(aes(color = `Daily Metric`, fill = `Daily Metric`), 
             alpha = 0.5, position = position_dodge(0.8)) +
   scale_y_continuous(trans='log10', labels = comma, oob = squish_infinite) +
@@ -460,7 +459,7 @@ dailycasestests <- ggplot(covidAU_gathered, aes(Date, `Daily Value`)) +
         axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
         axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
         legend.title = element_blank())
-ggsave(file="time_series_cases_tests_original.svg", plot=dailycasestests, width=10, height=8, dpi = 300)
+ggsave(file="~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/time_series_cases_tests_original.svg", plot=dailycasestests, width=10, height=8, dpi = 300)
 
 #######################################################################################
 # SECTION 16: Improve noise in daily case variable ------------------------------------
@@ -523,7 +522,7 @@ dailycasestestsdampen <- ggplot(covidAUcasezeros_gathered, aes(Date, `Daily Valu
                             axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
                             axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
                             legend.title = element_blank())
-ggsave(file="time_series_cases_tests_noise_dampened.svg", plot=dailycasestestsdampen, width=10, height=8, dpi = 300)
+ggsave(file="~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/time_series_cases_tests_noise_dampened.svg", plot=dailycasestestsdampen, width=10, height=8, dpi = 300)
 
 #kNN algorithm has improved noise in daily case variable in most states
 
@@ -663,4 +662,4 @@ for (i in states) {
 covid19_Australia_data_cleaned <- covidAU_dampened
 
 # Write final copy to CSV
-write_csv(covid19_Australia_data_cleaned, 'covid19_Australia_data_cleaned.csv')
+write_csv(covid19_Australia_data_cleaned, '~/COVID-19-AUSTRALIA-PREPROCESSING/Cleaned Data after Preprocessing/covid19_Australia_data_cleaned.csv')
