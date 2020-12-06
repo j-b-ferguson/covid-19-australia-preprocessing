@@ -12,7 +12,7 @@
 
 [Justin Ferguson LinkedIn](https://www.linkedin.com/in/jf2749/)
 
-[Contact](mailto:justin.benjamin.ferguson@gmail.com)
+[Contact](mailto:justin.benjamin.ferguson@gmail.com?subject=[GitHub]%20Source%20Han%20Sans)
 
 ## Executive Summary
 
