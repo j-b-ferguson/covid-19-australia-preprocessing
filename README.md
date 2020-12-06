@@ -9,7 +9,9 @@
 **Author**
 
 [Justin Ferguson GitHub](https://github.com/j-b-ferguson)
+
 [Justin Ferguson LinkedIn](https://www.linkedin.com/in/jf2749/)
+
 [Contact](mailto:justin.benjamin.ferguson@gmail.com)
 
 ## Executive Summary
