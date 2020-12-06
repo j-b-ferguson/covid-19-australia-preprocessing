@@ -4,13 +4,14 @@
 
 </div>
 
-# COVID-19 Cases & Tests Data Pre-processing
+# COVID-19 Australian Data Pre-processing
 
 ## Author
 
-[Justin Ferguson](https://github.com/j-b-ferguson)
+[Justin Ferguson GitHub](https://github.com/j-b-ferguson)
+[Justin Ferguson LinkedIn](https://www.linkedin.com/in/jf2749/)
 
-## **Executive Summary**
+## Executive Summary
 
 This report brings together data of worldwide COVID-19 cases and
 Australian COVID-19 testing. Through a series of pre-processing steps,
