@@ -1,6 +1,6 @@
-######################################################################################
-# SECTION 1: Packages ----------------------------------------------------------------
-######################################################################################
+########################################################################################################################################
+# SECTION 1: Packages
+########################################################################################################################################
 
 library(readr) # Read csv files
 library(dplyr) # Data frame manipulation
@@ -15,9 +15,9 @@ library(scales) # Custom scales for plot axis
 library(RColorBrewer) # Custom colour palettes for plots
 library(svglite) # Export plots into SVG format
 
-######################################################################################
-# SECTION 2: Data --------------------------------------------------------------------
-######################################################################################
+########################################################################################################################################
+# SECTION 2: Data Summary
+########################################################################################################################################
 
 cases <- read_csv('~/COVID-19-AUSTRALIA-PREPROCESSING/Original Untidy Data Sets/time_series_covid19_confirmed_global.csv')
 head(cases, 3) # Show first 3 observations of cases data frame
@@ -25,9 +25,9 @@ head(cases, 3) # Show first 3 observations of cases data frame
 tests <- read_csv('~/COVID-19-AUSTRALIA-PREPROCESSING/Original Untidy Data Sets/Total tests.csv')
 head(tests, 3) # Show first 3 observations of tests data frame
 
-######################################################################################
-# SECTION 3: Understand --------------------------------------------------------------
-######################################################################################
+########################################################################################################################################
+# SECTION 3: Understand Data Frames
+########################################################################################################################################
 
 list(class(cases), class(tests)) # Show data structure
 list(dim(cases), dim(tests)) # Show data frame dimensions
@@ -39,9 +39,9 @@ list(sapply(cases[,1:4], class),
 # Show data types in tests data frame
 str(tests, give.attr = FALSE)
 
-######################################################################################
-# SECTION 4: Reshape -----------------------------------------------------------------
-######################################################################################
+########################################################################################################################################
+# SECTION 4: Reshape Data Frames
+########################################################################################################################################
 
 # Reshape cases data frame from wide to long format
 cases_gathered <- gather(cases, key = 'Date', value = 'Cumulative Cases', 5:273)
@@ -51,9 +51,9 @@ head(cases_gathered, 3)
 tests_gathered <- tests %>% gather(key = 'Province/State', value = 'Cumulative Tests', 2:9)
 head(tests_gathered, 3)
 
-######################################################################################
-# SECTION 5: Convert -----------------------------------------------------------------
-######################################################################################
+########################################################################################################################################
+# SECTION 5: Convert Data Types
+########################################################################################################################################
 
 # Rename first variable of tests_gathered data frame
 colnames(tests_gathered)[1] <- 'Date'
@@ -87,9 +87,9 @@ cases_gathered$Date <- cases_gathered$Date %>% as.Date(., "%m/%d/%y")
 # Check data structure of cases_gathered data frame
 str(cases_gathered)
 
-#####################################################################################
-# SECTION 6: Join -------------------------------------------------------------------
-#####################################################################################
+########################################################################################################################################
+# SECTION 6: Join Data Frames
+########################################################################################################################################
 
 # Left join tests_gathered onto cases_gathered by both data sets by "Province/State" and "Date"  
 covidAU_joined <- left_join(cases_gathered, tests_gathered, 
@@ -101,17 +101,14 @@ covidAU_joined <- covidAU_joined[covidAU_joined$`Cumulative Cases` > 0,]
 # Preview new data set
 head(covidAU_joined)
 
-######################################################################################
-# SECTION 7: Insert new variables ----------------------------------------------------
-######################################################################################
+########################################################################################################################################
+# SECTION 7: Create Variables
+########################################################################################################################################
 
 # Insert new variables as NAs
 covidAU_joined$`Daily Cases` <- as.numeric(NA)
 covidAU_joined$`Daily Tests` <- as.numeric(NA)
-
-#######################################################################################
-# SECTION 8: Calculate daily values ---------------------------------------------------
-#######################################################################################
+covidAU_joined %>% select(`Province/State`, Date, `Daily Cases`, `Daily Tests`) %>% head(3)
 
 # A function to calculate daily case and daily test values from cumulative case and cumulative test values
 correctdailycasetest <- function(state) {
@@ -134,9 +131,16 @@ for (i in states) {
   correctdailycasetest(i)
 }
 
-######################################################################################
-# SECTION 9: Correct negative values -------------------------------------------------
-######################################################################################
+# Filter and show first 10 observations for Victoria
+covidAU_joined %>% filter(`Province/State` == 'VIC') %>% head(10)
+
+########################################################################################################################################
+# SECTION 8: Correct negative values
+########################################################################################################################################
+
+# Count number of observations with cases or tests less than zero
+covidAU_joined %>% filter(`Daily Cases` < 0) %>% count()
+covidAU_joined %>% filter(`Daily Tests` < 0) %>% count()
 
 # A function to correct negative daily cases and decreasing cumulative cases
 correctnegcases <- function(state) {
@@ -183,9 +187,13 @@ for (i in states) {
   correctnegtests(i)
 }
 
-#######################################################################################
-# SECTION 10: Logical inconsistencies and assumptions made ----------------------------
-#######################################################################################
+# Check to confirm that no negative values remain.
+covidAU_joined %>% filter(`Daily Cases` < 0) %>% count()
+covidAU_joined %>% filter(`Daily Tests` < 0) %>% count()
+
+########################################################################################################################################
+# SECTION 9: Logical Corrections and Pruning
+########################################################################################################################################
 
 # Count observations where daily cases are greater than daily tests - a logical inconsistency
 covidAU_joined %>% filter(`Daily Cases` > `Daily Tests`) %>% select(`Daily Tests`) %>% count()
@@ -201,30 +209,30 @@ for (i in states) {
   # Index of first missing value in daily test variable for each state prior to first complete case
   start <- which(covidAU_joined$`Province/State` == i & is.na(covidAU_joined$`Daily Tests`))[1]
   # Index of last missing value in daily test variable for each state prior to first complete case
-  stop <- which(covidAU_joined$`Province/State` == i & !is.na(covidAU_joined$`Daily Tests`))[1] - 1
+  finish <- which(covidAU_joined$`Province/State` == i & !is.na(covidAU_joined$`Daily Tests`))[1] - 1
   # Remove missing values in daily test variable prior to first complete case for each province/state
-  covidAU_joined <- covidAU_joined[-seq(start, stop), ]
+  covidAU_joined <- covidAU_joined[-seq(start, finish), ]
 }
 
 # Arrange by date
 covidAU_joined <- covidAU_joined %>% arrange(Date)
 
 # Find start date first instance
-begin <- which(covidAU_joined$Date == '2020-10-05')[1]
+start <- which(covidAU_joined$Date == '2020-10-05')[1]
 
 # Find end date last instance
-end <- which(covidAU_joined$Date == '2020-10-16')[8]
+finish <- which(covidAU_joined$Date == '2020-10-16')[8]
 
 # Daily tests for dates at the end of data frame from 2020-10-05 to 2020-10-16 are missing for all states - remove these
 # missing cases
-covidAU_joined <- covidAU_joined[-seq(begin,end),]
+covidAU_joined <- covidAU_joined[-seq(start,finish),]
 
-# Assume any remaining zeros in daily tests are incorrect. Assume these are missing value and impute later
+# Assume that any remaining zeros in daily tests are incorrect. Transform to missing values and impute later
 covidAU_joined[covidAU_joined$`Daily Tests` == 0 & !is.na(covidAU_joined$`Daily Tests`), 'Daily Tests'] <- NA
 
-#######################################################################################
-# SECTION 11: Check missing values and distributions ----------------------------------
-#######################################################################################
+########################################################################################################################################
+# SECTION 10: Check Missing Values and Plot Distributions
+########################################################################################################################################
 
 # Count of missing values in each variable independent of province/state
 is.na(covidAU_joined) %>% colSums()
@@ -268,20 +276,19 @@ distsvg <- ggplot(covidAU_joined, aes(`Daily Tests`)) +
               axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
 ggsave(file="~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/dailytestdistributions.svg", plot=distsvg, width=10, height=8, dpi = 300)
 
-#######################################################################################
-# SECTION 12: Decide the best regression statistic for imputation of missing values 
-#             given each province/state ----------------------------------------------#
+########################################################################################################################################
+# SECTION 11: Finding the Optimum Regression Statistic for Imputation
+########################################################################################################################################
 
 # NSW has no missing values, so redefine states variable as below
 states <- c("ACT", "NT", "QLD", "SA", "TAS", "VIC", "WA")
 
-# Subset the data frame for a machine learning test set, where each province/state has missing values removed from the daily test variable -------------------------------------------
+# Subset the data frame for a machine learning test set, where each province/state has missing values removed from the daily test variable
 for (i in states) {
-  assign(paste0('testset_', i), 
-    covidAU_joined[!is.na(covidAU_joined$`Daily Tests`) & covidAU_joined$`Province/State` == i,])
+  assign(paste0('testset_', i), covidAU_joined[!is.na(covidAU_joined$`Daily Tests`) & covidAU_joined$`Province/State` == i,])
 }
 
-# Calculate the missing value count for each province/state from the covidAU_joined data frame and save as variable
+# Calculate the missing value count for each province/state from the covidAU_joined data frame and save as a variable
 for (i in states) {
   statetesti <- covidAU_joined[covidAU_joined$`Province/State` == i & is.na(covidAU_joined$`Daily Tests`), 'Daily Tests']
   mvcounti <- count(statetesti)
@@ -315,7 +322,7 @@ for (i in states) {
 
 # This code chunk calculates regression statistics to compare the best statistic to use for missing value imputation.
 # The statistics used for imputation were either mean, median, or k-nearest neighbours. Regression statistics are the loss 
-# functions "mae", "mse", "rmse" and "mape". The statistics with the smallest loss is the preferred method of imputation.
+# functions "mae", "mse", "rmse" and "mape". The statistic with the smallest loss is the preferred method of imputation.
 for (i in states) {
   # Temporary placeholder variables for use in loop
   testset <- eval(as.name(paste0('testset_', i)))
@@ -376,9 +383,9 @@ plot(lossmatrix,
      main = 'Preferred Regression Statistic for Imputing Missing \nValues given Loss Function')
 dev.off()
 
-#######################################################################################
-# SECTION 13: Impute missing values of daily tests given preferred regression statistic
-#######################################################################################
+########################################################################################################################################
+# SECTION 12: Impute Missing Values
+########################################################################################################################################
 
 # NSW - no missing values, so no impute necessary
 # ACT - kNN imputation has least error according to loss functions, so use kNN imputation
@@ -404,10 +411,6 @@ for (i in c('ACT', 'QLD', 'VIC', 'WA')) {
   covidAU_joined[covidAU_joined$`Province/State` == i, ] <- kNNimputed[,-7]
 }
 
-#######################################################################################
-# SECTION 14: Correctly adjust cumulative tests ---------------------------------------
-#######################################################################################
-
 # Cumulative tests can now be correctly adjusted
 correctcumtests <- function(state) {
   # x is a temporary variable that filters the data frame by state
@@ -427,14 +430,16 @@ correctcumtests <- function(state) {
 }
 
 # Execute correctcumtests on all states
-states <- c('ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA')
 for (i in states) {
   correctcumtests(i)
 }
 
-#######################################################################################
-# SECTION 15: Check distributions of daily cases and daily tests ----------------------
-#######################################################################################
+# Confirm no missing values remain in the data frame
+is.na(covidAU_joined) %>% colSums()
+
+########################################################################################################################################
+# SECTION 13: Check for Noise in Time-series Plots
+########################################################################################################################################
 
 # Reshape covidAU_joined data frame into wide format to create a two variable time series area plot using ggplot2
 covidAU_wide <- covidAU_joined %>% gather(`Cumulative Metric`, `Cumulative Value`, 3:4)
@@ -442,28 +447,24 @@ covidAU_wide <- covidAU_wide %>% gather(`Daily Metric`, `Daily Value`, 3:4)
 
 # Create time series area plot overlaying daily cases and daily tests
 dailycasestests <- ggplot(covidAU_wide, aes(Date, `Daily Value`)) +
-  geom_area(aes(color = `Daily Metric`, fill = `Daily Metric`), 
-            alpha = 0.5, position = position_dodge(0.8)) +
-  scale_y_continuous(trans='log10', labels = comma, oob = squish_infinite) +
-  scale_color_manual(values = c("#08306B", "#4292C6")) +
-  scale_fill_manual(values = c("#08306B", "#4292C6")) +
-  facet_wrap(vars(`Province/State`), scales = "free") +
-  ylab("Value") +
-  ggtitle("COVID-19 Daily Cases and Tests in 2020") +
-  theme(plot.title = element_text(hjust = 0.5, size = 16, vjust = 1, face = "bold"),
-        plot.background = element_rect(fill = "#FFFFFF"),
-        panel.background = element_rect(fill = "#FFFFFF", colour = "#ededed", size = 2, linetype = "solid"),
-        panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "#ededed"), 
-        panel.grid.minor = element_blank(),
-        strip.background = element_blank(),
-        axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
-        axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
-        legend.title = element_blank())
+                   geom_area(aes(color = `Daily Metric`, fill = `Daily Metric`), 
+                             alpha = 0.5, position = position_dodge(0.8)) +
+                   scale_y_continuous(trans='log10', labels = comma, oob = squish_infinite) +
+                   scale_color_manual(values = c("#08306B", "#4292C6")) +
+                   scale_fill_manual(values = c("#08306B", "#4292C6")) +
+                   facet_wrap(vars(`Province/State`), scales = "free") +
+                   ylab("Value") +
+                   ggtitle("COVID-19 Daily Cases and Tests in 2020") +
+                   theme(plot.title = element_text(hjust = 0.5, size = 16, vjust = 1, face = "bold"),
+                         plot.background = element_rect(fill = "#FFFFFF"),
+                         panel.background = element_rect(fill = "#FFFFFF", colour = "#ededed", size = 2, linetype = "solid"),
+                         panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "#ededed"), 
+                         panel.grid.minor = element_blank(),
+                         strip.background = element_blank(),
+                         axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
+                         axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
+                         legend.title = element_blank())
 ggsave(file="~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/time_series_cases_tests_original.svg", plot=dailycasestests, width=10, height=8, dpi = 300)
-
-#######################################################################################
-# SECTION 16: Improve noise in daily case variable ------------------------------------
-#######################################################################################
 
 # All time series plots of daily cases (excluding NT) have several discontinuities; i.e. where values drop to zero as an impulse. 
 # These discontinuities appear noisy and shall be assumed to be not consistent of reality. An appropriate method to remove this noise is to use a 
@@ -473,7 +474,7 @@ ggsave(file="~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/time_se
 covidAU_casezeros <- covidAU_joined
 
 # Zeros that are adjacent to non-zero values on both sides are transformed into missing values. Other zeros are ignored to preserve the 'true zeros' in the data frame
-imputezeros <- function(state) {
+zeros <- function(state) {
   # x is a temporary variable that filters the data frame by state
   x <- covidAU_casezeros[covidAU_casezeros$`Province/State` == state, ]
   # Forward loop to transform zeros to missing values
@@ -487,11 +488,12 @@ imputezeros <- function(state) {
 }
 
 # Execute imputezeros function for all states    
+states <- c('ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA')
 for (i in states) {
-  imputezeros(i)
+  zeros(i)
 }
 
-# Impute injected missing values in the daily case variable with a kNN algorithm
+# Impute transformed missing values in the daily case variable with a kNN algorithm
 for (i in states) {
   stateTesti <- covidAU_casezeros[covidAU_casezeros$`Province/State` == i, ]
   k <- nrow(stateTesti) %>% sqrt() %>% floor()
@@ -526,10 +528,6 @@ ggsave(file="~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/time_se
 
 #kNN algorithm has improved noise in daily case variable in most states
 
-#######################################################################################
-# SECTION 17: Correctly adjust cumulative cases ---------------------------------------
-#######################################################################################
-
 # Cumulative cases can now be correctly adjusted
 correctcumcases <- function(state) {
   # x is a temporary variable that filters the data frame by state
@@ -554,9 +552,9 @@ for (i in states) {
 # Rename as logical name
 covidAU_dampened <- covidAU_casezeros
 
-#######################################################################################
-# SECTION 18: Add 7 and 14 day daily case moving average to data frame ----------------
-#######################################################################################
+########################################################################################################################################
+# SECTION 14: Create Moving Averages of COVID-19 Cases
+########################################################################################################################################
 
 # Create seven day daily case moving average variable and temporarily fill with missing values
 covidAU_dampened$`7 day daily case moving average` <- as.numeric(NA)
@@ -604,9 +602,12 @@ for (i in states) {
   fourteencaseavg(i)
 }
 
-#######################################################################################
-# SECTION 19: Add 7 and 14 day daily test moving average to data frame ----------------
-#######################################################################################
+# Show new data frame
+covidAU_dampened %>% head()
+
+########################################################################################################################################
+# SECTION 15: Create Moving Averages of COVID-19 Tests
+########################################################################################################################################
 
 # Create seven day daily test moving average variable and temporarily fill with missing values
 covidAU_dampened$`7 day daily test moving average` <- as.numeric(NA)
@@ -654,9 +655,12 @@ for (i in states) {
   fourteendayavgtest(i)
 }
 
-#######################################################################################
-# SECTION 19: Export as CSV -----------------------------------------------------------
-#######################################################################################
+# Show new data frame
+covidAU_dampened %>% head()
+
+########################################################################################################################################
+# SECTION 16: Export to CSV
+########################################################################################################################################
 
 # Rename to final copy
 covid19_Australia_data_cleaned <- covidAU_dampened
