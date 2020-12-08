@@ -1,6 +1,5 @@
 # COVID-19 Australian Data Pre-processing
 
-
 **Author**
 
 [Justin Ferguson GitHub](https://github.com/j-b-ferguson)
