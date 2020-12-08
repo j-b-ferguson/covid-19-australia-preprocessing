@@ -78,7 +78,7 @@ head(cases_gathered, 3)
 
 # Convert Province/State to factor type in cases_gathered data frame and rename variable labels
 cases_gathered$`Province/State` <- cases_gathered$`Province/State`%>% as.factor() %>% 
-  factor(levels = c('Australian Capital Territory', 'New South Wales', 'Northern Territory', 'Queensland', 'South Australia',                     'Tasmania', 'Victoria', 'Western Australia'),
+  factor(levels = c('Australian Capital Territory', 'New South Wales', 'Northern Territory', 'Queensland', 'South Australia', 'Tasmania', 'Victoria', 'Western Australia'),
          labels = c('ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA'))
 
 # Convert from character to date type in cases_gathered data frame
