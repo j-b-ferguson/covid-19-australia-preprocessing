@@ -1359,3 +1359,6 @@ covid19_Australia_data_cleaned <- covidAU_dampened
 # Write final copy to CSV
 write_csv(covid19_Australia_data_cleaned, '~/COVID-19-AUSTRALIA-PREPROCESSING/Cleaned Data after Preprocessing/covid19_Australia_data_cleaned.csv')
 ```
+
+
+[View Cleaned Data Set](https://github.com/j-b-ferguson/COVID-19-AUSTRALIA-PREPROCESSING/blob/main/Cleaned%20Data%20after%20Preprocessing/covid19_Australia_data_cleaned.csv)
