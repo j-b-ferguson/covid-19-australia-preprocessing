@@ -1,3 +1,13 @@
+# COVID-19 Australian Data Pre-processing
+
+**Author**
+
+[Justin Ferguson GitHub](https://github.com/j-b-ferguson)
+
+[Justin Ferguson LinkedIn](https://www.linkedin.com/in/jf2749/)
+
+[Contact](mailto:justin.benjamin.ferguson@gmail.com?subject=GitHub%20Enquiry)
+
 ## Executive Summary
 
 This notebook brings together data of worldwide COVID-19 cases and
@@ -619,8 +629,7 @@ correctnegtests <- function(state) {
 }
 ```
 
-Then running the functions for each state ensures all
-negative value corrections have been made.
+Then running the functions for each state ensures all negative value corrections have been made.
 
 
 ```r
@@ -735,10 +744,8 @@ is.na(covidAU_joined) %>% colSums()
 ```
 
 ```
-##   Province/State             Date Cumulative Cases Cumulative Tests 
-##                0                0                0               12 
-##      Daily Cases      Daily Tests 
-##                0               71
+##   Province/State             Date Cumulative Cases Cumulative Tests      Daily Cases      Daily Tests 
+##                0                0                0               12                0               71
 ```
 
 The percentage of missing values in each variable for each state is given below.
@@ -755,51 +762,36 @@ for (i in states) {
 
 ```
 ## [1] "ACT missing values"
-##   Province/State             Date Cumulative Cases Cumulative Tests 
-##        0.0000000        0.0000000        0.0000000        0.5128205 
-##      Daily Cases      Daily Tests 
-##        0.0000000        3.1578947 
+##   Province/State             Date Cumulative Cases Cumulative Tests      Daily Cases      Daily Tests 
+##        0.0000000        0.0000000        0.0000000        0.5128205        0.0000000        3.1578947 
 ## [1] "NT missing values"
-##   Province/State             Date Cumulative Cases Cumulative Tests 
-##         0.000000         0.000000         0.000000         0.000000 
-##      Daily Cases      Daily Tests 
-##         0.000000         2.162162 
+##   Province/State             Date Cumulative Cases Cumulative Tests      Daily Cases      Daily Tests 
+##         0.000000         0.000000         0.000000         0.000000         0.000000         2.162162 
 ## [1] "NSW missing values"
-##   Province/State             Date Cumulative Cases Cumulative Tests 
-##                0                0                0                0 
-##      Daily Cases      Daily Tests 
-##                0                0 
+##   Province/State             Date Cumulative Cases Cumulative Tests      Daily Cases      Daily Tests 
+##                0                0                0                0                0                0 
 ## [1] "QLD missing values"
-##   Province/State             Date Cumulative Cases Cumulative Tests 
-##         0.000000         0.000000         0.000000         2.051282 
-##      Daily Cases      Daily Tests 
-##         0.000000         4.188482 
+##   Province/State             Date Cumulative Cases Cumulative Tests      Daily Cases      Daily Tests 
+##         0.000000         0.000000         0.000000         2.051282         0.000000         4.188482 
 ## [1] "SA missing values"
-##   Province/State             Date Cumulative Cases Cumulative Tests 
-##          0.00000          0.00000          0.00000          0.00000 
-##      Daily Cases      Daily Tests 
-##          0.00000          1.04712 
+##   Province/State             Date Cumulative Cases Cumulative Tests      Daily Cases      Daily Tests 
+##          0.00000          0.00000          0.00000          0.00000          0.00000          1.04712 
 ## [1] "TAS missing values"
-##   Province/State             Date Cumulative Cases Cumulative Tests 
-##         0.000000         0.000000         0.000000         3.743316 
-##      Daily Cases      Daily Tests 
-##         0.000000         7.777778 
+##   Province/State             Date Cumulative Cases Cumulative Tests      Daily Cases      Daily Tests 
+##         0.000000         0.000000         0.000000         3.743316         0.000000         7.777778 
 ## [1] "VIC missing values"
-##   Province/State             Date Cumulative Cases Cumulative Tests 
-##         0.000000         0.000000         0.000000         0.000000 
-##      Daily Cases      Daily Tests 
-##         0.000000         2.538071 
+##   Province/State             Date Cumulative Cases Cumulative Tests      Daily Cases      Daily Tests 
+##         0.000000         0.000000         0.000000         0.000000         0.000000         2.538071 
 ## [1] "WA missing values"
-##   Province/State             Date Cumulative Cases Cumulative Tests 
-##                0                0                0                0 
-##      Daily Cases      Daily Tests 
-##                0               20
+##   Province/State             Date Cumulative Cases Cumulative Tests      Daily Cases      Daily Tests 
+##                0                0                0                0                0               20
 ```
 
 Counts of missing values in each variable for each state are well visualised with the missing value matrix below. On the right-hand side of each matrix are the number of variables with missing values. On the left-hand side are the number of observations corresponding to those on the right-hand side. Below each matrix are the number of missing values in each variable.
 
 
 ```r
+svglite('~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/missingvaluematrix.svg')
 par(mar = c(0,0,0,0))
 layout.matrix <- matrix(c(1, 2, 3, 4, 5, 6, 7, 8, 9), nrow = 3, ncol =3)
 layout(mat = layout.matrix)
@@ -808,9 +800,10 @@ MVStatematrix <- for (i in states) {
   md.pattern(MVState, rotate.names = TRUE)
   mtext(i, 2, las=2, line = -4)
 }
+dev.off()
 ```
 
-![](h_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+<img src="R Code for Preprocessing/missingvaluematrix.svg" width="3000" />
 
 Missing values are shown in either `Cumulative Tests` or `Daily Tests`, or both. To preserve the continuity of the time-series data frame, missing values shall not be removed but imputed instead. To assist imputation methods, the distribution of tests are plotted below for each state. N.B. `Cumulative Tests` are corrected after imputation of `Daily Tests`, so there is no need to visualise the distributions of this variable. 
 
@@ -834,10 +827,10 @@ distsvg <- ggplot(covidAU_joined, aes(`Daily Tests`)) +
               strip.background = element_blank(),
               axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
               axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
-distsvg
+ggsave(file="~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/dailytestdistributions.svg", plot=distsvg, width=10, height=8, dpi = 300)
 ```
 
-![](h_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+<img src="R Code for Preprocessing/dailytestdistributions.svg" width="3000" />
 
 ## Finding the Optimum Regression Statistic for Imputation
 
@@ -983,15 +976,17 @@ for (i in states) {
 lossmatrix <- bind_cols(lossACT, lossNT, lossQLD, lossSA, lossTAS, lossVIC, lossWA) %>% as.matrix()
 
 # Plot loss matrix
+svglite('~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/lossmatrix.svg')
 par(mfrow = c(1,1), mai = c(1,1.3,1,1.3))
 plot(lossmatrix, 
      col = c(rev(brewer.pal(4, 'Blues'))), 
      xlab = 'State', 
      ylab = 'Loss Functions',
      main = 'Preferred Regression Statistic for Imputing Missing \nValues given Loss Function')
+dev.off()
 ```
 
-![](h_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
+<img src="R Code for Preprocessing/lossmatrix.svg" width="3000" />
 
 ## Impute Missing Values
 
@@ -1054,10 +1049,8 @@ is.na(covidAU_joined) %>% colSums()
 ```
 
 ```
-##   Province/State             Date Cumulative Cases Cumulative Tests 
-##                0                0                0                0 
-##      Daily Cases      Daily Tests 
-##                0                0
+##   Province/State             Date Cumulative Cases Cumulative Tests      Daily Cases      Daily Tests 
+##                0                0                0                0                0                0
 ```
 
 ## Check for Noise in Time-series Plots
@@ -1089,10 +1082,10 @@ dailycasestests <- ggplot(covidAU_wide, aes(Date, `Daily Value`)) +
                          axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
                          axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
                          legend.title = element_blank())
-dailycasestests
+ggsave(file="~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/time_series_cases_tests_original.svg", plot=dailycasestests, width=10, height=8, dpi = 300)
 ```
 
-![](h_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
+<img src="R Code for Preprocessing/time_series_cases_tests_original.svg" width="3000" />
 
 For all states excluding `NT`, there are several discontinuities in `Daily Cases` where values drop to zero rapidly. These features appear noisy on the time-series plots and shall be assumed to be inconsistent with reality. 
 
@@ -1164,10 +1157,10 @@ dailycasestestsdampen <- ggplot(covidAUcasezeros_gathered, aes(Date, `Daily Valu
                             axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
                             axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
                             legend.title = element_blank())
-dailycasestestsdampen
+ggsave(file="~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/time_series_cases_tests_noise_dampened.svg", plot=dailycasestestsdampen, width=10, height=8, dpi = 300)
 ```
 
-![](h_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
+<img src="R Code for Preprocessing/time_series_cases_tests_noise_dampened.svg" width="3000" />
 
 With the noise reduced, the values in `Cumulative Cases` are now transformed to account for the corrections made in `Daily Cases`. Like many of functions created above, the values of `Cumulative Cases` are corrected by the `correctcumcases()` function by iteration. The logic is followed in the code chunk below. 
 
