@@ -1,36 +1,21 @@
-# COVID-19 Australian Data Pre-processing
+<h1><p align="center">COVID-19 Australian Data Pre-processing</h1>
 
-**Author**
+<p align="center"><b>Author</b></p>
+<a href="https://github.com/j-b-ferguson"><p align="center">Justin Ferguson GitHub</p></a>
+<a href="https://www.linkedin.com/in/jf2749/"><p align="center">Justin Ferguson LinkedIn</p></a>
+<a href="mailto:justin.benjamin.ferguson@gmail.com?subject=GitHub%20Enquiry"><p align="center">Contact</p></a>
 
-[Justin Ferguson GitHub](https://github.com/j-b-ferguson)
+<h2><p align=center>Executive Summary</h2>
 
-[Justin Ferguson LinkedIn](https://www.linkedin.com/in/jf2749/)
+This notebook brings together data of worldwide COVID-19 cases and Australian COVID-19 testing. Through a series of pre-processing steps, the data is filtered for cases and tests relevant to Australian states. It is then tidied, scanned, and transformed, as required.
 
-[Contact](mailto:justin.benjamin.ferguson@gmail.com?subject=GitHub%20Enquiry)
-
-## Executive Summary
-
-This notebook brings together data of worldwide COVID-19 cases and
-Australian COVID-19 testing. Through a series of pre-processing steps,
-the data is filtered for cases and tests relevant to Australian states.
-It is then tidied, scanned, and transformed, as required.
-
-To begin, the data sets are imported and saved. All variables and their
-data types are inspected and their context understood. Following the
-tidy data principles, the data frames are put into tidy format by
-reshaping the data frames from wide to long format. Afterwards, proper
-data type conversions are performed to ensure all types are logically
-correct. Now in tidy format, with type conversions completed, the data
-frames are joined by their common keys with a left join. Then
-manipulating, the data set is filtered row-wise and two new variables are
-inserted.
+To begin, the data sets are imported and saved. All variables and their data types are inspected and their context understood. Following the tidy data principles, the data frames are put into tidy format by reshaping the data frames from wide to long format. Afterwards, proper data type conversions are performed to ensure all types are logically correct. Now in tidy format, with type conversions completed, the data frames are joined by their common keys with a left join. Then manipulating, the data set is filtered row-wise and two new variables are inserted.
 
 The following sections identify and rectify a number of errors, inconsistencies, and missing values present in the joined data set. Such as negative day-to-day case or test values, or days where cases are greater than performed tests. Through a series of user-defined functions and machine learning imputation methods, the errors, inconsistencies, and missing values are corrected. Visualisations of the time-series is then used to locate and reduce noise with a k-nearest neighbours algorithm. This improves the overall smoothness of the data set for later analysis and predictive modelling.
 
 Finally, seven and fourteen day moving averages are added to complement the short term daily movement in COVID-19 cases and tests. These long term movements should allow for greater insights in data analysis and perhaps improve predictive modelling.
 
-## Packages
-
+<h2><p align=center>Packages</h2>
 
 ```r
 library(readr) # Read csv files
@@ -47,15 +32,9 @@ library(RColorBrewer) # Custom colour palettes for plots
 library(svglite) # Export plots into SVG format
 ```
 
-## Data Summary
+<h2><p align=center>Data Summary</h2>
 
-The first data set is a
-time-series obtained from the COVID-19 GitHub repository of John Hopkins
-Whiting School of Engineering, Centre for Systems Science and
-Engineering. The data set contains the daily cumulative counts of COVID-19
-cases in various countries and regions, as well as applicable provinces
-and states. The data set was saved into CSV format by
-right-clicking the ‘Raw’ icon inside the link below.
+The first data set is a time-series obtained from the COVID-19 GitHub repository of John Hopkins Whiting School of Engineering, Centre for Systems Science and Engineering. The data set contains the daily cumulative counts of COVID-19 cases in various countries and regions, as well as applicable provinces and states. The data set was saved into CSV format by right-clicking the ‘Raw’ icon inside the link below.
 
 [John Hopkins COVID-19 Cases Data](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv)
 
@@ -66,7 +45,6 @@ right-clicking the ‘Raw’ icon inside the link below.
 | 3        | Lat                | Latitude in degrees of Country/Region or corresponding Province/State (if applicable)                                                         |
 | 4        | Long               | Longtitude in degrees of Country/Region or corresponding Province/State (if applicable)                                                       |
 | 5 - 273  | 1/22/20 … 10/16/20 | Cumulative counts of daily COVID-19 cases in their corresponding Country/Region or Province/State (if applicable) from 1/22/20 until 10/16/20 |
-
 
 ```r
 cases <- read_csv('~/COVID-19-AUSTRALIA-PREPROCESSING/Original Untidy Data Sets/time_series_covid19_confirmed_global.csv')
@@ -108,10 +86,7 @@ head(cases, 3) # Show first 3 observations of cases data frame
 ## #   `5/2/20` <dbl>, `5/3/20` <dbl>, ...
 ```
 
-The second data set is a time-series made available by
-www.covid19data.com.au. The data set gives the daily cumulative counts
-of COVID-19 tests in Australian provinces and states. The CSV data set
-was extracted from the below link by clicking the ‘download data’ icon.
+The second data set is a time-series made available by www.covid19data.com.au. The data set gives the daily cumulative counts of COVID-19 tests in Australian provinces and states. The CSV data set was extracted from the below link by clicking the ‘download data’ icon.
 
 [Infogram COVID-19 Tests Data](https://e.infogram.com/_/3osqzRmYBiJsJafg79YC?parent_url=https%3A%2F%2Fwww-covid19data-com-au.filesusr.com%2Fhtml%2F2aed08_944ecbfd558f24812177bca5a8a74000.html&src=embed#)
 
@@ -135,13 +110,11 @@ head(tests, 3) # Show first 3 observations of tests data frame
 ## 3 10/03 10165    NA    NA    NA    NA    NA    NA    NA
 ```
 
-In their current formats, there are no
-common variables for these data sets to be joined by. The data sets must first be reshaped into tidy format. This process is covered later.
+In their current formats, there are no common variables for these data sets to be joined by. The data sets must first be reshaped into tidy format. This process is covered later.
 
-## Understand Data Frames
+<h2><p align=center>Understand Data Frames</h2>
 
 Before both data sets are altered, the data structure must first be understood. The class of both data frames are shown below as data frames.
-
 
 ```r
 list(class(cases), class(tests)) # Show data structure
@@ -157,7 +130,6 @@ list(class(cases), class(tests)) # Show data structure
 
 The output below gives the dimensions of the data frames as observations (rows) and variables (columns), respectively.
 
-
 ```r
 list(dim(cases), dim(tests)) # Show data frame dimensions
 ```
@@ -170,14 +142,7 @@ list(dim(cases), dim(tests)) # Show data frame dimensions
 ## [1] 211   9
 ```
 
-The overall structure of the data is now examined. This is normally
-achieved with the `str()` function, which allows each variable and
-its corresponding data type to be checked. However, with the `cases`
-data frame, there are 273 variables, so a few short cuts are taken to
-reduce the output. Using the `sapply()` function, the data type of all
-columns are inspected. A short cut to inspect the date variables is to
-check for unique data types.
-
+The overall structure of the data is now examined. This is normally achieved with the `str()` function, which allows each variable and its corresponding data type to be checked. However, with the `cases` data frame, there are 273 variables, so a few short cuts are taken to reduce the output. Using the `sapply()` function, the data type of all columns are inspected. A short cut to inspect the date variables is to check for unique data types.
 
 ```r
 # Show data types in cases data frame
@@ -195,7 +160,6 @@ list(sapply(cases[,1:4], class),
 ```
 
 The corresponding structure of the `tests` data frame is given in the output below.
-
 
 ```r
 # Show data types in tests data frame
@@ -215,15 +179,11 @@ str(tests, give.attr = FALSE)
 ##  $ ACT: num [1:211] NA NA NA NA NA NA NA NA NA NA ...
 ```
 
-The next step is usually to apply the proper data type conversions.
-However, it is more convenient in this case to reshape both data frames
-into long format first.
+The next step is usually to apply the proper data type conversions. However, it is more convenient in this case to reshape both data frames into long format first.
 
-## Reshape Data Frames
+<h2><p align=center>Reshape Data Frames</h2>
 
-In this section, the tidy data principles are applied to both data
-frames to enable further pre-processing. For reference, recall the tidy data
-principles:
+In this section, the tidy data principles are applied to both data frames to enable further pre-processing. For reference, recall the tidy data principles:
 
 Condition 1 - Each variable is its own column,
 
@@ -231,20 +191,9 @@ Condition 2 - Each observation is its own row,
 
 Condition 3 - Each value is its own cell.
 
-Starting with the `cases` data frame, the dates that form the column
-names from columns 5 to 273 are defined as variables, when in fact they
-are values and should be in cells of their own under a new variable
-name, such as 'Date'. The values assigned to the date variables should
-also be separate from the dates themselves, in a new variable such as
-'Cumulative Cases'. Hence, the `cases` data frame is not in a tidy
-format, and will require reshaping from wide to long format with
-`gather()`.
+Starting with the `cases` data frame, the dates that form the column names from columns 5 to 273 are defined as variables, when in fact they are values and should be in cells of their own under a new variable name, such as 'Date'. The values assigned to the date variables should also be separate from the dates themselves, in a new variable such as 'Cumulative Cases'. Hence, the `cases` data frame is not in a tidy format, and will require reshaping from wide to long format with `gather()`.
 
-Using `gather()`, the dates that currently form the variables will
-instead be values under a new variable named `Date`. The values that
-currently exist under each date variable will instead form values under
-a new variable named `Cumulative Cases`.
-
+Using `gather()`, the dates that currently form the variables will instead be values under a new variable named `Date`. The values that currently exist under each date variable will instead form values under a new variable named `Cumulative Cases`.
 
 ```r
 # Reshape cases data frame from wide to long format
@@ -261,21 +210,9 @@ head(cases_gathered, 3)
 ## 3 <NA>             Algeria           28.0  1.66 1/22/20                  0
 ```
 
-Inspect now the `tests` data frame, the state names that form the column
-names from columns 2 to 9 are defined as variables, when in fact they are
-values, and should be put into their own cells under a new variable
-name, such as 'Province/State'. The values assigned to the state
-variables should also be separate from the states themselves, under a
-new variable such as 'Cumulative Tests'. Hence, the `tests` data frame
-is in an untidy format, and will also required reshaping from wide to
-long format.
+Inspect now the `tests` data frame, the state names that form the column names from columns 2 to 9 are defined as variables, when in fact they are values, and should be put into their own cells under a new variable name, such as 'Province/State'. The values assigned to the state variables should also be separate from the states themselves, under a new variable such as 'Cumulative Tests'. Hence, the `tests` data frame is in an untidy format, and will also required reshaping from wide to long format.
 
-Applying `gather()`, the states that currently form the variables will
-instead be values under a new variable named `Province/State`. The
-values that currently exist under each state variable will instead form
-values under a new variable named `Cumulative Tests`. Note:
-`Province/State` is now a variable common to both data frames.
-
+Applying `gather()`, the states that currently form the variables will instead be values under a new variable named `Province/State`. The values that currently exist under each state variable will instead form values under a new variable named `Cumulative Tests`. Note: `Province/State` is now a variable common to both data frames.
 
 ```r
 # Reshape tests data frame from wide to long format
@@ -292,13 +229,9 @@ head(tests_gathered, 3)
 ## 3 10/03 NSW                           10165
 ```
 
-## Convert Data Types
+<h2><p align=center>Convert Data Types</h2>
 
-Now both data frames are in tidy format, proper data type
-conversions can be performed. Beginning with `tests_gathered`, the
-column name of the first variable is changed from `X1` to `Date`. This
-variable is common to both data frames.
-
+Now both data frames are in tidy format, proper data type conversions can be performed. Beginning with `tests_gathered`, the column name of the first variable is changed from `X1` to `Date`. This variable is common to both data frames.
 
 ```r
 # Rename first variable of tests_gathered data frame
@@ -312,26 +245,20 @@ names(tests_gathered)
 
 The format of `Date` is changed into DD/MM/YY and a type conversion from character to date is performed.
 
-
 ```r
 # Change date format to DD/MM/YY format and convert from character to date type in tests_gathered data frame
 tests_gathered$Date <- replace(tests_gathered$Date, values = paste0(tests_gathered$Date, '/20'))
 tests_gathered$Date <- tests_gathered$Date %>% as.Date(., "%d/%m/%y")
 ```
 
-Next, since the cumulative test numbers evolve with respect to their
-isolated states, it is logical to convert the `Province/State` variable from
-character type to factor.
-
+Next, since the cumulative test numbers evolve with respect to their isolated states, it is logical to convert the `Province/State` variable from character type to factor.
 
 ```r
 # Convert Province/State to factor type in tests_gathered data frame
 tests_gathered$`Province/State` <- tests_gathered$`Province/State` %>% as.factor()
 ```
 
-The converted `tests_gathered` data frame now has the following
-structure.
-
+The converted `tests_gathered` data frame now has the following structure.
 
 ```r
 # Check data structure of tests_gathered data frame
@@ -345,9 +272,7 @@ str(tests_gathered)
 ##  $ Cumulative Tests: num [1:1688] 8008 8371 10165 10221 14856 ...
 ```
 
-Now consider `cases_gathered`, a subset of this data frame is taken with
-observations of interest corresponding to Australian cases.
-
+Now consider `cases_gathered`, a subset of this data frame is taken with observations of interest corresponding to Australian cases.
 
 ```r
 # Subset cases_gathered data frame for observations concerning Australia
@@ -366,10 +291,7 @@ head(cases_gathered, 3)
 ## 3 Northern Territory           1/22/20                  0
 ```
 
-The `Province/State` variable is then converted from character type to
-factor, and the values are abbreviated to match those stored in
-`tests_gathered`.
-
+The `Province/State` variable is then converted from character type to factor, and the values are abbreviated to match those stored in `tests_gathered`.
 
 ```r
 # Convert Province/State to factor type in cases_gathered data frame and rename variable labels
@@ -378,18 +300,14 @@ cases_gathered$`Province/State` <- cases_gathered$`Province/State`%>% as.factor(
          labels = c('ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA'))
 ```
 
-Data type conversion is then performed on the correctly formatted `date`
-variable.
-
+Data type conversion is then performed on the correctly formatted `date` variable.
 
 ```r
 # Convert from character to date type in cases_gathered data frame
 cases_gathered$Date <- cases_gathered$Date %>% as.Date(., "%m/%d/%y")
 ```
 
-The converted `cases_gathered` data frame now has the following
-structure.
-
+The converted `cases_gathered` data frame now has the following structure.
 
 ```r
 # Check data structure of cases_gathered data frame
@@ -403,11 +321,9 @@ str(cases_gathered)
 ##  $ Cumulative Cases: num [1:2152] 0 0 0 0 0 0 0 0 0 0 ...
 ```
 
-## Join Data Frames
+<h2><p align=center>Join Data Frames</h2>
 
-A left join is now carried out to merge the data frames by the common
-variables `Date` and `Province/State`.
-
+A left join is now carried out to merge the data frames by the common variables `Date` and `Province/State`.
 
 ```r
 # Left join tests_gathered onto cases_gathered by both data sets by "Province/State" and "Date"  
@@ -416,7 +332,6 @@ covidAU_joined <- left_join(cases_gathered, tests_gathered,
 ```
 
 The joined data frame is then filtered from the date of the first recorded case `2020-01-26`.
-
 
 ```r
 # Filter cumulative cases greater than zero
@@ -437,10 +352,9 @@ head(covidAU_joined)
 ## 6 VIC              2020-01-28                  1                 NA
 ```
 
-## Create Variables
+<h2><p align=center>Create Variables</h2>
 
 Two variables `Daily Cases` and `Daily Tests` are now created from values of `Cumulative Cases` and `Cumulative Tests` by calculation. These new variables allow errors and inconsistencies to be identified in the `Cumulative Cases` and `Cumulative Tests` columns.
-
 
 ```r
 # Insert new variables as NAs
@@ -473,15 +387,7 @@ These new variables aid in the following:
     `Daily Cases` and `Daily Tests` will be correctly altered during
     this process.
     
-Note well the above criteria, an algorithm `correctdailycasetest()` is
-now made to calculate `Cumulative Cases[i+1] - Cumulative Cases[i]`,
-where `i` is a given day. The value of this difference represents the
-value of `Daily Cases[i+1]`. For this algorithm to work properly, both
-values in `Cumulative Cases` must be numeric, or otherwise
-`Daily Cases[i+1]` returns a missing value. The same logic is used to
-correct test inconsistencies, so `Cumulative Tests` and `Daily Tests`
-have also been incorporated into this function.
-
+Note well the above criteria, an algorithm `correctdailycasetest()` is now made to calculate `Cumulative Cases[i+1] - Cumulative Cases[i]`, where `i` is a given day. The value of this difference represents the value of `Daily Cases[i+1]`. For this algorithm to work properly, both values in `Cumulative Cases` must be numeric, or otherwise `Daily Cases[i+1]` returns a missing value. The same logic is used to correct test inconsistencies, so `Cumulative Tests` and `Daily Tests` have also been incorporated into this function.
 
 ```r
 # A function to calculate daily case and daily test values from cumulative case and cumulative test values
@@ -513,7 +419,6 @@ for (i in states) {
 
 The output below has been filtered to show only those daily cases and tests in `VIC`. Nevertheless, the correction has been applied to all states.
 
-
 ```r
 # Filter and show first 10 observations for Victoria
 covidAU_joined %>% filter(`Province/State` == 'VIC') %>% head(10)
@@ -536,10 +441,9 @@ covidAU_joined %>% filter(`Province/State` == 'VIC') %>% head(10)
 ## # ... with 1 more variable: `Daily Tests` <dbl>
 ```
 
-## Correct Negative Values
+<h2><p align=center>Correct Negative Values</h2>
 
 Negative values of daily cases or tests represent data entry corrections and should be corrected to avoid errors in later stages of pre-processing. The following chunk counts the number of observations with cases or tests less than zero.
-
 
 ```r
 # Count number of observations with cases or tests less than zero
@@ -564,8 +468,7 @@ covidAU_joined %>% filter(`Daily Tests` < 0) %>% count()
 ## 1     6
 ```
 
-To correct the negative values, consider the following procedure applied
-to the case variable of the data frame:
+To correct the negative values, consider the following procedure applied to the case variable of the data frame:
 
 1.  In descending order, calculate `Daily Cases[i] + Daily Cases[i-1]`
     for each given day `i`. This becomes the new value of
@@ -581,10 +484,7 @@ to the case variable of the data frame:
 3.  The negative value of `Daily Cases[i]` becomes 0. Using the example
     in step one, `Daily Cases[i]` transforms from -1 to 0.
 
-The same logic applies to the test variable and there is an equivalent
-procedure as above. To implement these procedures, the functions
-`correctnegcases()` and `correctnegtests()` have been created, as below.
-
+The same logic applies to the test variable and there is an equivalent procedure as above. To implement these procedures, the functions `correctnegcases()` and `correctnegtests()` have been created, as below.
 
 ```r
 # A function to correct negative daily cases and decreasing cumulative cases
@@ -606,7 +506,6 @@ correctnegcases <- function(state) {
   }
 }
 ```
-
 
 ```r
 # A function to correct negative daily tests and decreasing cumulative tests
@@ -631,7 +530,6 @@ correctnegtests <- function(state) {
 
 Then running the functions for each state ensures all negative value corrections have been made.
 
-
 ```r
 # Execute correctnegcases and correctnegtests functions over each state
 for (i in states) {
@@ -641,7 +539,6 @@ for (i in states) {
 ```
 
 The below output shows that no negative values remain.
-
 
 ```r
 covidAU_joined %>% filter(`Daily Cases` < 0) %>% count()
@@ -665,10 +562,9 @@ covidAU_joined %>% filter(`Daily Tests` < 0) %>% count()
 ## 1     0
 ```
 
-## Logical Corrections and Pruning
+<h2><p align=center>Logical Corrections and Pruning</h2>
 
 The output below shows observations where `Daily Cases` are greater than `Daily Tests`. If an assumption is made that requires all cases to be linked to tests made on the same day, then this is logically incorrect because tests should always be greater than or equal to diagnosed cases.
-
 
 ```r
 # Count observations where daily cases are greater than daily tests - logically incorrect
@@ -684,14 +580,12 @@ covidAU_joined %>% filter(`Daily Cases` > `Daily Tests`) %>% select(`Daily Tests
 
 Therefore, observations where `Daily Cases` are greater than `Daily Tests` are assumed erroneous and transformed into missing values.
 
-
 ```r
 # Observations where daily cases are greater than daily tests are assumed erroneous and made missing values
 covidAU_joined[!is.na(covidAU_joined$`Daily Tests`) & covidAU_joined$`Daily Tests` < covidAU_joined$`Daily Cases`, 'Daily Tests'] <- NA
 ```
 
 There are a number of missing values contained in the data frame before the first complete observation for each state. These missing values shall be removed from the data set to avoid accidentally introducing bias caused by imputation methods.
-
 
 ```r
 #Arrange data frame by state
@@ -710,7 +604,6 @@ for (i in states) {
 
 Further, there are missing values at the end of the data frame for each state that must be removed to avoid bias, beginning at `2020-10-05` and ending at `2020-10-16`.
 
-
 ```r
 # Arrange by date
 covidAU_joined <- covidAU_joined %>% arrange(Date)
@@ -727,16 +620,14 @@ covidAU_joined <- covidAU_joined[-seq(start,finish),]
 
 The data frame has now effectively been pruned at both ends. To conclude this section, assume that any remaining zeros contained within the `Daily Tests` variable are erroneous due to the extensive amount of testing performed throughout this period of data collection.  
 
-
 ```r
 # Assume that any remaining zeros in daily tests are incorrect. Transform to missing values and impute later
 covidAU_joined[covidAU_joined$`Daily Tests` == 0 & !is.na(covidAU_joined$`Daily Tests`), 'Daily Tests'] <- NA
 ```
 
-## Check Missing Values and Plot Distributions
+<h2><p align=center>Check Missing Values and Plot Distributions</h2>
 
 The data frame has the following total missing values in each column.
-
 
 ```r
 # Count of missing values in each variable independent of province/state
@@ -749,7 +640,6 @@ is.na(covidAU_joined) %>% colSums()
 ```
 
 The percentage of missing values in each variable for each state is given below.
-
 
 ```r
 # Percentage of missing values in each variable for each province/state
@@ -788,7 +678,6 @@ for (i in states) {
 ```
 
 Counts of missing values in each variable for each state are well visualised with the missing value matrix below. On the right-hand side of each matrix are the number of variables with missing values. On the left-hand side are the number of observations corresponding to those on the right-hand side. Below each matrix are the number of missing values in each variable.
-
 
 ```r
 svglite('~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/missingvaluematrix.svg')
@@ -832,7 +721,7 @@ ggsave(file="~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/dailyte
 
 <img src="R Code for Preprocessing/dailytestdistributions.svg" width="3000" />
 
-## Finding the Optimum Regression Statistic for Imputation
+<h2><p align=center>Finding the Optimum Regression Statistic for Imputation</h2>
 
 In this section, the optimum regression statistics for imputing missing values in `Daily Tests` are evaluated. The regression statistics used are either median, mean or k-nearest neighbours. Firstly, note `NSW` has no missing values, so imputation is not necessary here. 
 
@@ -844,7 +733,6 @@ states <- c("ACT", "NT", "QLD", "SA", "TAS", "VIC", "WA")
 
 A machine learning test set is then created from a subset of the data frame for each state. The test set extracts only complete cases from the data frame.
 
-
 ```r
 # Subset the data frame for a machine learning test set, where each province/state has missing values removed from the daily test variable
 for (i in states) {
@@ -853,7 +741,6 @@ for (i in states) {
 ```
 
 The missing value count from the `covidAU_joined` data frame for each state are saved as new variables. This is done to assist in the creation of a machine learning training set. The count of missing values in the training set for each state will be proportional to those in the original data frame.
-
 
 ```r
 # Calculate the missing value count for each province/state from the covidAU_joined data frame and save as a variable
@@ -865,7 +752,6 @@ for (i in states) {
 ```
 
 A machine learning training set is created by injecting artificial missing values into a duplicated test set.
-
 
 ```r
 # Create machine learning training set by injecting a random sample of missing values into the test set
@@ -885,7 +771,6 @@ for (i in states) {
 ```
 
 Now compare the counts of missing values between the training set and the original data frame.
-
 
 ```r
 # Show original count of missing values in covidAU_joined data frame for each province/state
@@ -922,7 +807,6 @@ for (i in states) {
 ```
 
 The following code chunk evaluates the optimum regression statistics for imputation by comparing loss functions between the test and training sets. The loss functions are the Mean Absolute Error, Mean Square Error, Root Mean Square Error, and Mean Absolute Percentage Error. The regression statistic with the least error is the preferred method of imputation.
-
 
 ```r
 for (i in states) {
@@ -988,7 +872,7 @@ dev.off()
 
 <img src="R Code for Preprocessing/lossmatrix.svg" width="3000" />
 
-## Impute Missing Values
+<h2><p align=center>Impute Missing Values</h2>
 
 Consider the missing value matrix plot above. Based upon the loss functions, the optimum regression statistic for `ACT`, `QLD`, `VIC`, and `WA` is k-nearest neighbours. For `SA`, either median or mean shall suffice. `NT` and `TAS` are more complicated to evaluate as the least error varies among the loss functions. 
 
@@ -1053,10 +937,9 @@ is.na(covidAU_joined) %>% colSums()
 ##                0                0                0                0                0                0
 ```
 
-## Check for Noise in Time-series Plots
+<h2><p align=center>Check for Noise in Time-series Plots</h2>
 
 To check the smoothness of the time-series data, visualisations of the `Daily Cases` and `Daily Tests` variables are plotted below. 
-
 
 ```r
 # Reshape covidAU_joined data frame into wide format to create a two variable time series area plot using ggplot2
@@ -1119,7 +1002,6 @@ for (i in states) {
 
 A good method to improve noise is to use a k-nearest neighbours algorithm on the transformed missing values.
 
-
 ```r
 # Impute transformed missing values in the daily cases variable with a kNN algorithm
 for (i in states) {
@@ -1131,7 +1013,6 @@ for (i in states) {
 ```
 
 Compare the plots below with those above, the algorithm has clearly improved noise in the `Daily Cases` variable in most states.
-
 
 ```r
 # Reshape covidAU_casezeros data frame into wide format to create a two variable time series area plot using ggplot2 with kNN dampening applied
@@ -1164,7 +1045,6 @@ ggsave(file="~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/time_se
 
 With the noise reduced, the values in `Cumulative Cases` are now transformed to account for the corrections made in `Daily Cases`. Like many of functions created above, the values of `Cumulative Cases` are corrected by the `correctcumcases()` function by iteration. The logic is followed in the code chunk below. 
 
-
 ```r
 # Cumulative cases can now be correctly adjusted
 correctcumcases <- function(state) {
@@ -1191,12 +1071,11 @@ for (i in states) {
 covidAU_dampened <- covidAU_casezeros
 ```
 
-## Create Moving Averages of COVID-19 Cases
+<h2><p align=center>Create Moving Averages of COVID-19 Cases</h2>
 
 Daily changes in COVID-19 cases give short term insights. For purposes of data analysis or predictive modelling, this might not yield very insightful results. Coupled alongside daily changes, a moving average should be included to yield longer term insights.
 
 Below is a code chunk to insert a seven day case moving average into the data frame.
-
 
 ```r
 # Create seven day case moving average variable and temporarily fill with missing values
@@ -1225,7 +1104,6 @@ for (i in states) {
 ```
 
 A fourteen day case moving average is also created.
-
 
 ```r
 # Create fourteen day case moving average variable and temporarily fill with missing values
@@ -1270,10 +1148,9 @@ covidAU_dampened %>% head()
 ## #   Average` <dbl>, `14 Day Case Moving Average` <dbl>
 ```
 
-## Create Moving Averages of COVID-19 Tests
+<h2><p align=center>Create Moving Averages of COVID-19 Tests</h2>
 
 Similar to the last section, moving averages should also be created to gauge longer term changes in COVID-19 test numbers. Below is a code chunk to insert a seven day test moving average into the data frame.
-
 
 ```r
 # Create seven day test moving average variable and temporarily fill with missing values
@@ -1302,7 +1179,6 @@ for (i in states) {
 ```
 
 A fourteen day test moving average is also created.
-
 
 ```r
 # Create fourteen day test moving average variable and temporarily fill with missing values
@@ -1347,10 +1223,9 @@ covidAU_dampened %>% head()
 ## #   Average` <dbl>, `14 Day Test Moving Average` <dbl>
 ```
 
-## Export to CSV
+<h2><p align=center>Export to CSV</h2>
 
 A CSV of the final cleaned data frame is created in the chunk below.
-
 
 ```r
 # Rename to final copy
@@ -1359,6 +1234,5 @@ covid19_Australia_data_cleaned <- covidAU_dampened
 # Write final copy to CSV
 write_csv(covid19_Australia_data_cleaned, '~/COVID-19-AUSTRALIA-PREPROCESSING/Cleaned Data after Preprocessing/covid19_Australia_data_cleaned.csv')
 ```
-
 
 [View Cleaned Data Set](https://github.com/j-b-ferguson/COVID-19-AUSTRALIA-PREPROCESSING/blob/main/Cleaned%20Data%20after%20Preprocessing/covid19_Australia_data_cleaned.csv)
