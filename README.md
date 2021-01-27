@@ -1,4 +1,4 @@
-<h1><p align="center">COVID-19 Australian Data Cleaning</h1><a href="https://www.justinferguson.me/pages/COVID-19_Aus_cleaned.html"><span style="font-size: small;">Report Version</span></a>
+<h1><p align="center">COVID-19 Australian Data Cleaning</h1><a href="https://www.justinferguson.me/pages/COVID-19_Aus_cleaned.html"><span style="font-size: 6px;">Report Version</span></a>
 
 <p align="center"><b>Author</b></p>
 <a href="https://github.com/j-b-ferguson"><p align="center">Justin Ferguson GitHub</p></a>
