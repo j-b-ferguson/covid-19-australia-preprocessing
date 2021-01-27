@@ -1,4 +1,4 @@
-<h1><p align="center">COVID-19 Australian Data Cleaning</h1>
+<h1><p align="center">COVID-19 Australia Data Cleaning</h1>
 
 <p align="center"><b>Author</b></p>
 <a href="https://github.com/j-b-ferguson"><p align="center">Justin Ferguson GitHub</p></a>
