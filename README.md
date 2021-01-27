@@ -1,10 +1,11 @@
 <h1><p align="center">COVID-19 Australian Data Cleaning</h1>
+<a href="https://www.justinferguson.me/pages/COVID-19_Aus_cleaned.html"><p align="center">Report Version</p></a>
 
 <p align="center"><b>Author</b></p>
 <a href="https://github.com/j-b-ferguson"><p align="center">Justin Ferguson GitHub</p></a>
 <a href="https://www.linkedin.com/in/j-b-ferguson/"><p align="center">Justin Ferguson LinkedIn</p></a>
 <a href="mailto:justin.benjamin.ferguson@gmail.com?subject=GitHub%20Enquiry"><p align="center">Contact</p></a>
-<a href="https://www.justinferguson.me/pages/COVID-19_Aus_cleaned.html"><p align="center">View the more readable report version here!</p></a>
+
 <h2><p align=center>Executive Summary</h2>
 
 This notebook brings together data of worldwide COVID-19 cases and Australian COVID-19 testing. Through a series of pre-processing steps, the data is filtered for cases and tests relevant to Australian states. It is then tidied, scanned, and transformed, as required.
