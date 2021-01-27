@@ -15,7 +15,7 @@ The following sections identify and rectify a number of errors, inconsistencies,
 
 Finally, seven and fourteen day moving averages are added to complement the short term daily movement in COVID-19 cases and tests. These long term movements should allow for greater insights in data analysis and perhaps improve predictive modelling.
 
-<h2><p align=center>Packages</h2>
+<h2><p align="center">Packages</h2>
 
 ```r
 library(readr) # Read csv files
@@ -32,7 +32,7 @@ library(RColorBrewer) # Custom colour palettes for plots
 library(svglite) # Export plots into SVG format
 ```
 
-<h2><p align=center>Data Summary</h2>
+<h2><p align="center">Data Summary</h2>
 
 The first data set is a time-series obtained from the COVID-19 GitHub repository of John Hopkins Whiting School of Engineering, Centre for Systems Science and Engineering. The data set contains the daily cumulative counts of COVID-19 cases in various countries and regions, as well as applicable provinces and states. The data set was saved into CSV format by right-clicking the ‘Raw’ icon inside the link below.
 
@@ -112,7 +112,7 @@ head(tests, 3) # Show first 3 observations of tests data frame
 
 In their current formats, there are no common variables for these data sets to be joined by. The data sets must first be reshaped into tidy format. This process is covered later.
 
-<h2><p align=center>Understand Data Frames</h2>
+<h2><p align="center">Understand Data Frames</h2>
 
 Before both data sets are altered, the data structure must first be understood. The class of both data frames are shown below as data frames.
 
@@ -181,7 +181,7 @@ str(tests, give.attr = FALSE)
 
 The next step is usually to apply the proper data type conversions. However, it is more convenient in this case to reshape both data frames into long format first.
 
-<h2><p align=center>Reshape Data Frames</h2>
+<h2><p align="center">Reshape Data Frames</h2>
 
 In this section, the tidy data principles are applied to both data frames to enable further pre-processing. For reference, recall the tidy data principles:
 
@@ -229,7 +229,7 @@ head(tests_gathered, 3)
 ## 3 10/03 NSW                           10165
 ```
 
-<h2><p align=center>Convert Data Types</h2>
+<h2><p align="center">Convert Data Types</h2>
 
 Now both data frames are in tidy format, proper data type conversions can be performed. Beginning with `tests_gathered`, the column name of the first variable is changed from `X1` to `Date`. This variable is common to both data frames.
 
@@ -321,7 +321,7 @@ str(cases_gathered)
 ##  $ Cumulative Cases: num [1:2152] 0 0 0 0 0 0 0 0 0 0 ...
 ```
 
-<h2><p align=center>Join Data Frames</h2>
+<h2><p align="center">Join Data Frames</h2>
 
 A left join is now carried out to merge the data frames by the common variables `Date` and `Province/State`.
 
@@ -352,7 +352,7 @@ head(covidAU_joined)
 ## 6 VIC              2020-01-28                  1                 NA
 ```
 
-<h2><p align=center>Create Variables</h2>
+<h2><p align="center">Create Variables</h2>
 
 Two variables `Daily Cases` and `Daily Tests` are now created from values of `Cumulative Cases` and `Cumulative Tests` by calculation. These new variables allow errors and inconsistencies to be identified in the `Cumulative Cases` and `Cumulative Tests` columns.
 
@@ -441,7 +441,7 @@ covidAU_joined %>% filter(`Province/State` == 'VIC') %>% head(10)
 ## # ... with 1 more variable: `Daily Tests` <dbl>
 ```
 
-<h2><p align=center>Correct Negative Values</h2>
+<h2><p align="center">Correct Negative Values</h2>
 
 Negative values of daily cases or tests represent data entry corrections and should be corrected to avoid errors in later stages of pre-processing. The following chunk counts the number of observations with cases or tests less than zero.
 
@@ -562,7 +562,7 @@ covidAU_joined %>% filter(`Daily Tests` < 0) %>% count()
 ## 1     0
 ```
 
-<h2><p align=center>Logical Corrections and Pruning</h2>
+<h2><p align="center">Logical Corrections and Pruning</h2>
 
 The output below shows observations where `Daily Cases` are greater than `Daily Tests`. If an assumption is made that requires all cases to be linked to tests made on the same day, then this is logically incorrect because tests should always be greater than or equal to diagnosed cases.
 
@@ -625,7 +625,7 @@ The data frame has now effectively been pruned at both ends. To conclude this se
 covidAU_joined[covidAU_joined$`Daily Tests` == 0 & !is.na(covidAU_joined$`Daily Tests`), 'Daily Tests'] <- NA
 ```
 
-<h2><p align=center>Check Missing Values and Plot Distributions</h2>
+<h2><p align="center">Check Missing Values and Plot Distributions</h2>
 
 The data frame has the following total missing values in each column.
 
@@ -721,7 +721,7 @@ ggsave(file="~/COVID-19-AUSTRALIA-PREPROCESSING/R Code for Preprocessing/dailyte
 
 <img src="R Code for Preprocessing/dailytestdistributions.svg" width="3000" />
 
-<h2><p align=center>Finding the Optimum Regression Statistic for Imputation</h2>
+<h2><p align="center">Finding the Optimum Regression Statistic for Imputation</h2>
 
 In this section, the optimum regression statistics for imputing missing values in `Daily Tests` are evaluated. The regression statistics used are either median, mean or k-nearest neighbours. Firstly, note `NSW` has no missing values, so imputation is not necessary here. 
 
@@ -872,7 +872,7 @@ dev.off()
 
 <img src="R Code for Preprocessing/lossmatrix.svg" width="3000" />
 
-<h2><p align=center>Impute Missing Values</h2>
+<h2><p align="center">Impute Missing Values</h2>
 
 Consider the missing value matrix plot above. Based upon the loss functions, the optimum regression statistic for `ACT`, `QLD`, `VIC`, and `WA` is k-nearest neighbours. For `SA`, either median or mean shall suffice. `NT` and `TAS` are more complicated to evaluate as the least error varies among the loss functions. 
 
@@ -937,7 +937,7 @@ is.na(covidAU_joined) %>% colSums()
 ##                0                0                0                0                0                0
 ```
 
-<h2><p align=center>Check for Noise in Time-series Plots</h2>
+<h2><p align="center">Check for Noise in Time-series Plots</h2>
 
 To check the smoothness of the time-series data, visualisations of the `Daily Cases` and `Daily Tests` variables are plotted below. 
 
@@ -1071,7 +1071,7 @@ for (i in states) {
 covidAU_dampened <- covidAU_casezeros
 ```
 
-<h2><p align=center>Create Moving Averages of COVID-19 Cases</h2>
+<h2><p align="center">Create Moving Averages of COVID-19 Cases</h2>
 
 Daily changes in COVID-19 cases give short term insights. For purposes of data analysis or predictive modelling, this might not yield very insightful results. Coupled alongside daily changes, a moving average should be included to yield longer term insights.
 
@@ -1148,7 +1148,7 @@ covidAU_dampened %>% head()
 ## #   Average` <dbl>, `14 Day Case Moving Average` <dbl>
 ```
 
-<h2><p align=center>Create Moving Averages of COVID-19 Tests</h2>
+<h2><p align="center">Create Moving Averages of COVID-19 Tests</h2>
 
 Similar to the last section, moving averages should also be created to gauge longer term changes in COVID-19 test numbers. Below is a code chunk to insert a seven day test moving average into the data frame.
 
@@ -1223,7 +1223,7 @@ covidAU_dampened %>% head()
 ## #   Average` <dbl>, `14 Day Test Moving Average` <dbl>
 ```
 
-<h2><p align=center>Export to CSV</h2>
+<h2><p align="center">Export to CSV</h2>
 
 A CSV of the final cleaned data frame is created in the chunk below.
 
