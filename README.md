@@ -8,7 +8,7 @@
 <p><b>Other Versions</b></p>
 <a href="https://www.justinferguson.me/pages/COVID-19_Aus_cleaned.html"><p>HTML Report</p></a>
 
-<h2>Executive Summary</h2>
+<h1>Executive Summary</h1>
 
 This notebook brings together data of worldwide COVID-19 cases and Australian COVID-19 testing. Through a series of pre-processing steps, the data is filtered for cases and tests relevant to Australian states. It is then tidied, scanned, and transformed, as required.
 
